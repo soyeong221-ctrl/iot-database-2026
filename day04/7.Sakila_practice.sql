@@ -80,7 +80,7 @@ SELECT c.name, count(fc.film_id) AS "영화 개수"
  ON fc.film_id = f.film_id
 GROUP BY c.name WITH ROLLUP;
 
--- 10-2
+-- 10-2 카테고리별 영화수 조회하시오
 SELECT IFNULL(c.name, '--합계--') AS "카테고리"
 	 , count(fc.film_id) AS "영화 개수"
  FROM category c
@@ -89,3 +89,9 @@ SELECT IFNULL(c.name, '--합계--') AS "카테고리"
  JOIN film f
  ON fc.film_id = f.film_id
 GROUP BY c.name WITH ROLLUP;
+
+
+
+
+
+
