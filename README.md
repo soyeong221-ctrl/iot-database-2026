@@ -1262,33 +1262,21 @@ IoT 개발자 데이터베이스 리포지토리
 ### C/C++ MySQL연동
 
 - 개발방법
-    - MySQL 8.0 이상
-    - MySQL Connector/C++ 라이브러리 설치
+    - MySQL 8.0 이상 (8.0.45)
+    - MySQL Server 자체 라이브러리 사용
     - Visual Studio 프로젝트 생성
     - C++ 코드 작성
 
-#### MySQL Connect C/C++ 라이브러리
+#### MySQL Server 8.0 설치
 
-- https://dev.mysql.com/downloads/connector/cpp/
+- https://dev.mysql.com/downloads/mysql/8.0.html 에서 
     - Windows (x86, 64-bit), MSI Installer 다운로드
-    - C:\Program Files\MySQL\MySQL Connector C++ 9.6\ 에 설치됨
 
-- 시스템속성
-    - 고급 > 환경 변수 > path에 MySQL 관련 DLL이 위치하는 경로 추가
-    - VS나 콘솔 재시작
+    ![alt text](image-38.png)
 
-    ![alt text](image-26.png)
+    - 간단하게 설치 완료
 
-
-### Visual Studio 프로젝트 속성
-
-- 프로젝트 속성 (반드시! 부모 기본값 상속 체크)
-    - C/C++ > 일반 > 추가 포함 디렉토리
-        - C:\Program Files\MySQL\MySQL Connector C++ 9.6\include 추가
-    - 링커 > 일반 > 추가 라이브러리 디렉토리
-        - C:\Program Files\MySQL\MySQL Connector C++ 9.6\lib64\vs14 추가
-    - 링커 > 입력 > 추가 종속성
-        - mysqlcppconn.lib
+- MySQL C API 사용
 
 #### 텔넷 클라이언트 설정
 
@@ -1298,6 +1286,90 @@ IoT 개발자 데이터베이스 리포지토리
     - powershell이나 콘솔
 
     ![alt text](image-24.png)
+
+#### Visual C++ 프로젝트 설정
+
+- 생성 후 Visual C++ 프로젝트 속성
+    - VC++ 디렉터리 > 일반 > 포함 디렉터리
+        - C:\Program Files\MySQL\MySQL Server 8.0\include
+    - VC++ 디렉터리 > 일반 > 라이브러리 디렉터리
+        - C:\Program Files\MySQL\MySQL Server 8.0\lib
+
+    ![alt text](image-39.png)    
+    
+    - 링커 > 입력 > 추가종속성
+        - libmysql.lib 입력
+
+    ![alt text](image-40.png)    
+
+- MySQL 추가 라이브러리 디렉터리
+    - libmysql.dll 파일 프로젝트로 복사
+
+    ![alt text](image-41.png)
+
+- 시스템 속성 sysdm.cpl
+    - 고급 > 환경 변수 > 시스템 변수 path
+        - C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+    ![alt text](image-42.png)
+
+- Visual Studio 재시작
+
+
+#### C++ MySQL 연동
+
+- 기본 연결확인 구현
+- 테이블 데이터 확인
+    - 쿼리문 문자열 마지막 ; 무조건 제거(오류 발생)
+
+- MySQL 연동 순서 - [소스](./day09/MySqlMadangApp/main.cpp)
+    1. 콘솔 인코딩 UTF-8 설정
+    2. 연결, 행데이터, 결과 구조체 변수, 포인터 변수 선언
+    3. MySQL 초기화
+    4. 접속정보로 접속
+    5. 서버 문자셋 UTF-8 설정
+    6. 쿼리 실행
+    7. 결과 메모리 저장
+    8. 한 행씩 Fetch, 출력 - SELECT에 한함
+    9. 결과 메모리 해제
+    10. 접속 종료
+
+#### MySQL CRUD 앱 구현
+
+- Book 테이블 CRUD 테스트 - [소스](./day09/MySqlCrudTest/main.cpp)
+
+- C학습 AddressBook 프로젝트와 비교
+    - 텍스트파일 File IO vs MySQL DB
+    - contact 구조체 vs MySQL 자체 구조체
+    - 파일관련 작업 vs MySQL 함수로 처리
+
+![alt text](image-43.png)
+
+
+- MySQL C API 함수목록
+    - mysql_init() - MySQL DB연결 초기화
+    - mysql_real_connect() - 연결 시도
+    - mysql_error() - 에러메시지 확인
+    - mysql_query() - 쿼리실행
+    - mysql_store_result() - 쿼리실행결과 메모리 저장
+    - mysql_fetch_row() - 한 행씩 읽어오기
+    - mysql_free_result() - 쿼리실행결과 메모리 해제
+    - mysql_affected_rows() - 쿼리실행 처리 행수 리턴
+    - mysql_close() - DB연결 종료
+
+- MySQL Connector/C++
+    - MySQL C API를 C++로 클래스화 한 라이브러리
+    - 객체화, 예외처리 기능 고급화
+    - 운영체제 환경 영향 지대
+    - 설정난이도 높음 + Visual Studio 설정 까다로움
+    - 유지보수 구조적으로는 좋음
+
+- MySQL C API
+    - C언어 기반
+    - 함수 중심
+    - 사용난이도 낮음
+    - 설정난이도 낮음
+    - 예외처리를 직접 처리
 
 
 ### 언어
